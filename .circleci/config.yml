@@ -87,7 +87,7 @@ workflows:
           app-dir: pre-sentence-report-handler
           context:
             - hmpps-common-vars
-#            - hmpps-delius-deploy-to-ecs-pre-prod
+            - hmpps-delius-deploy-to-ecs-pre-prod
           requires:
             - deploy-to-test
           filters:
@@ -105,6 +105,6 @@ workflows:
           app-dir: pre-sentence-report-handler
           context:
             - hmpps-common-vars
-#            - hmpps-delius-deploy-to-ecs-prod
+            - hmpps-delius-deploy-to-ecs-prod
           requires:
             - request-prod-approval
