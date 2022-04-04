@@ -31,6 +31,8 @@ jobs:
     parameters:
       app-dir:
         type: string
+      environment_name:
+        type: string
       environment_type:
         type: enum
         enum:
@@ -51,7 +53,7 @@ jobs:
           role-arn: ${AWS_ROLE_ARN}
       - run:
           name: Upload to Lambda
-          command: aws lambda update-function-code --profile deploy --function-name "${AWS_ECS_ENV_NAME}-<< parameters.app-dir >>" --zip-file fileb://<< parameters.app-dir >>.zip
+          command: aws lambda update-function-code --profile deploy --function-name "<< parameters.environment_name >>-<< parameters.app-dir >>" --zip-file fileb://<< parameters.app-dir >>.zip
       - jira/notify:
           job_type: deployment
           environment: ${AWS_ECS_ENV_NAME}
@@ -69,8 +71,9 @@ workflows:
             - hmpps-common-vars
       - deploy:
           name: deploy-to-test
-          app-dir: pre-sentence-report-handler
           environment_type: testing
+          environment_name: delius-test
+          app-dir: pre-sentence-report-handler
           context:
             - hmpps-common-vars
             - hmpps-delius-deploy-to-ecs-test
@@ -79,8 +82,9 @@ workflows:
             - package
       - deploy:
           name: deploy-to-pre-prod
-          app-dir: pre-sentence-report-handler
           environment_type: staging
+          environment_name: delius-pre-prod
+          app-dir: pre-sentence-report-handler
           context:
             - hmpps-common-vars
 #            - hmpps-delius-deploy-to-ecs-pre-prod
@@ -96,8 +100,9 @@ workflows:
             - deploy-to-pre-prod
       - deploy:
           name: deploy-to-prod
-          app-dir: pre-sentence-report-handler
           environment_type: production
+          environment_name: delius-prod
+          app-dir: pre-sentence-report-handler
           context:
             - hmpps-common-vars
 #            - hmpps-delius-deploy-to-ecs-prod
