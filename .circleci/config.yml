@@ -19,7 +19,7 @@ jobs:
       - run:
           name: Create zip file
           command: zip -r ../<< parameters.app-dir >>.zip .
-          working-directory: << parameters.app-dir >>
+          working_directory: << parameters.app-dir >>
       - persist_to_workspace:
           name: Persist zip file
           root: .
