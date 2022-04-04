@@ -15,9 +15,11 @@ jobs:
       - checkout
       - python/install-packages:
           app-dir: << parameters.app-dir >>
+          args: --target ./
       - run:
           name: Create zip file
-          command: zip -r << parameters.app-dir >>.zip << parameters.app-dir >>
+          command: zip -r ../<< parameters.app-dir >>.zip .
+          working_directory: << parameters.app-dir >>
       - persist_to_workspace:
           name: Persist zip file
           root: .
