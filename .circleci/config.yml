@@ -15,6 +15,7 @@ jobs:
       - checkout
       - python/install-packages:
           app-dir: << parameters.app-dir >>
+          args: --target ./
       - run:
           name: Create zip file
           command: zip -r << parameters.app-dir >>.zip << parameters.app-dir >>
