@@ -8,27 +8,27 @@ jobs:
   package:
     executor: python/default
     parameters:
-      app_dir:
+      app-dir:
         type: string
     steps:
       - checkout
       - python/install-packages:
-          app_dir: << parameters.app_dir >>
+          app-dir: << parameters.app-dir >>
       - run:
           name: Create zip file
-          command: zip -r << parameters.app_dir >>.zip << parameters.app_dir >>
+          command: zip -r << parameters.app-dir >>.zip << parameters.app-dir >>
       - persist_to_workspace:
           name: Persist zip file
           root: .
           paths:
-            - << parameters.app_dir >>.zip
+            - << parameters.app-dir >>.zip
       - store_artifacts:
-          path: << parameters.app_dir >>.zip
+          path: << parameters.app-dir >>.zip
       - jira/notify
   deploy:
     executor: python/default
     parameters:
-      app_dir:
+      app-dir:
         type: string
       environment_type:
         type: enum
@@ -43,7 +43,7 @@ jobs:
           at: ./
       - run:
           name: Upload to Lambda
-          command: aws lambda update-function-code --function-name "${AWS_ECS_ENV_NAME}-<< parameters.app_dir >>" --zip-file fileb://<< parameters.app_dir >>.zip
+          command: aws lambda update-function-code --function-name "${AWS_ECS_ENV_NAME}-<< parameters.app-dir >>" --zip-file fileb://<< parameters.app-dir >>.zip
       - jira/notify:
           job_type: deployment
           environment: ${AWS_ECS_ENV_NAME}
@@ -54,12 +54,12 @@ workflows:
   deploy-pre-sentence-report-handler:
     jobs:
       - python/test:
-          app_dir: pre-sentence-report-handler
+          app-dir: pre-sentence-report-handler
       - package:
-          app_dir: pre-sentence-report-handler
+          app-dir: pre-sentence-report-handler
       - deploy:
           name: deploy-to-test
-          app_dir: pre-sentence-report-handler
+          app-dir: pre-sentence-report-handler
           environment_type: testing
           context:
             - hmpps-common-vars
@@ -69,7 +69,7 @@ workflows:
             - package
       - deploy:
           name: deploy-to-pre-prod
-          app_dir: pre-sentence-report-handler
+          app-dir: pre-sentence-report-handler
           environment_type: staging
           context:
             - hmpps-common-vars
@@ -86,7 +86,7 @@ workflows:
             - deploy-to-pre-prod
       - deploy:
           name: deploy-to-prod
-          app_dir: pre-sentence-report-handler
+          app-dir: pre-sentence-report-handler
           environment_type: production
           context:
             - hmpps-common-vars
