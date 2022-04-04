@@ -18,7 +18,8 @@ jobs:
           args: --target ./
       - run:
           name: Create zip file
-          command: zip -r << parameters.app-dir >>.zip << parameters.app-dir >>
+          command: zip -r << parameters.app-dir >>.zip **/*
+          working-directory: << parameters.app-dir >>
       - persist_to_workspace:
           name: Persist zip file
           root: .
