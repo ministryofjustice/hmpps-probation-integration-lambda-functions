@@ -67,7 +67,7 @@ workflows:
             - hmpps-common-vars
             - hmpps-delius-deploy-to-ecs-test
           requires:
-            - test
+            - python/test
             - package
       - deploy:
           name: deploy-to-pre-prod
