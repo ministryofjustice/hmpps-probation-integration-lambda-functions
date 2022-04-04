@@ -57,6 +57,8 @@ workflows:
           app-dir: pre-sentence-report-handler
       - package:
           app-dir: pre-sentence-report-handler
+          context:
+            - hmpps-common-vars
       - deploy:
           name: deploy-to-test
           app-dir: pre-sentence-report-handler
