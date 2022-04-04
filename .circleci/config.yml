@@ -1,0 +1,110 @@
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@2.1.0
+  jira: circleci/jira@1.3.1
+  python: circleci/python@2.0.3
+
+jobs:
+  package:
+    executor: python/default
+    parameters:
+      app-dir:
+        type: string
+    steps:
+      - checkout
+      - python/install-packages:
+          app-dir: << parameters.app-dir >>
+      - run:
+          name: Create zip file
+          command: zip -r << parameters.app-dir >>.zip << parameters.app-dir >>
+      - persist_to_workspace:
+          name: Persist zip file
+          root: .
+          paths:
+            - << parameters.app-dir >>.zip
+      - store_artifacts:
+          path: << parameters.app-dir >>.zip
+      - jira/notify
+  deploy:
+    executor: python/default
+    parameters:
+      app-dir:
+        type: string
+      environment_name:
+        type: string
+      environment_type:
+        type: enum
+        enum:
+          - production
+          - staging
+          - testing
+          - development
+          - unmapped
+    steps:
+      - attach_workspace:
+          at: ./
+      - aws-cli/install
+      - aws-cli/setup:
+          profile-name: default
+      - aws-cli/role-arn-setup:
+          profile-name: deploy
+          source-profile: default
+          role-arn: ${AWS_ROLE_ARN}
+      - run:
+          name: Upload to Lambda
+          command: aws lambda update-function-code --profile deploy --function-name "<< parameters.environment_name >>-<< parameters.app-dir >>" --zip-file fileb://<< parameters.app-dir >>.zip
+      - jira/notify:
+          job_type: deployment
+          environment: ${AWS_ECS_ENV_NAME}
+          environment_type: << parameters.environment_type >>
+
+workflows:
+  version: 2
+  deploy-pre-sentence-report-handler:
+    jobs:
+      - python/test:
+          app-dir: pre-sentence-report-handler
+      - package:
+          app-dir: pre-sentence-report-handler
+          context:
+            - hmpps-common-vars
+      - deploy:
+          name: deploy-to-test
+          environment_type: testing
+          environment_name: delius-test
+          app-dir: pre-sentence-report-handler
+          context:
+            - hmpps-common-vars
+            - hmpps-delius-deploy-to-ecs-test
+          requires:
+            - python/test
+            - package
+      - deploy:
+          name: deploy-to-pre-prod
+          environment_type: staging
+          environment_name: delius-pre-prod
+          app-dir: pre-sentence-report-handler
+          context:
+            - hmpps-common-vars
+            - hmpps-delius-deploy-to-ecs-pre-prod
+          requires:
+            - deploy-to-test
+          filters:
+            branches:
+              only:
+                - main
+      - request-prod-approval:
+          type: approval
+          requires:
+            - deploy-to-pre-prod
+      - deploy:
+          name: deploy-to-prod
+          environment_type: production
+          environment_name: delius-prod
+          app-dir: pre-sentence-report-handler
+          context:
+            - hmpps-common-vars
+            - hmpps-delius-deploy-to-ecs-prod
+          requires:
+            - request-prod-approval
