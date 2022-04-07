@@ -1,19 +1,17 @@
-import delius_api_psr_post
+import delius_api_service
+import pre_sentence_report_service
 
 
 def handler(event, context):
-    # get these from the PSR event message
+    # get values from the event message
     crn = str(event["crn"])
-    court_report_id = str(event["court_report_id"])
+    psr_id = str(event["pre_sentence_report_urn"])
 
     # get the file from PSR service
-    file_path = "dummy.pdf"
-    file = {"fileData": open(file_path, "rb")}
+    file = pre_sentence_report_service.get_pre_sentence_report_file(psr_id=psr_id)
 
-    # call to delius api to upload the PSR file
-    response = delius_api_psr_post.post_psr(
-        crn=crn, court_report_id=court_report_id, file=file
-    )
+    # upload the file to Delius
+    response = delius_api_service.put_pre_sentence_report(crn=crn, psr_id=psr_id, file=file)
 
     print(response.status_code)
     print(response.content)

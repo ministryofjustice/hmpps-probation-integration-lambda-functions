@@ -1,4 +1,5 @@
 {
   "crn": "D001022",
-  "court_report_id": 2500000000
+  "pre_sentence_report_uuid": "123e4567-e89b-12d3-a456-426614174000",
+  "pre_sentence_report_urn": "urn:psr-service:pre-sentence-report:123e4567-e89b-12d3-a456-426614174000"
 }

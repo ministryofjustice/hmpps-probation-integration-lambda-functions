@@ -1,2 +1,4 @@
-requests==2.*
-pytest==7.*
+boto3~=1.16.9
+requests~=2.27.1
+pytest~=7.1.1
+mock~=4.0.3
