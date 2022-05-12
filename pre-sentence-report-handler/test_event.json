@@ -1,5 +1,18 @@
 {
-  "crn": "D001022",
-  "pre_sentence_report_uuid": "123e4567-e89b-12d3-a456-426614174000",
-  "pre_sentence_report_urn": "urn:psr-service:pre-sentence-report:123e4567-e89b-12d3-a456-426614174000"
+  "version": "1",
+  "eventType": "pre-sentence.report.completed",
+  "description": "A Pre-Sentence Report has been completed",
+  "detailUrl": "http://localhost:3000/api/v1/report/123e4567-e89b-12d3-a456-426614174000",
+  "occurredAt": "2022-10-05T12:00:00.000Z",
+  "additionalInformation": {
+    "reportId": "123e4567-e89b-12d3-a456-426614174000"
+  },
+  "personReference": {
+    "identifiers": [
+      {
+        "type": "CRN",
+        "value": "D001022"
+      }
+    ]
+  }
 }
