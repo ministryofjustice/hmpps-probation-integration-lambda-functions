@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "hmpps-probation-integration-lambda-functions"
+version = "0.1.0"
+description = ""
+authors = ["Probation Integration"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+boto3 = "^1.16.9"
+requests = "^2.27.1"
+urllib3 = "^1.25.11"
+pytest = "^7.1.1"
+mock = "^4.0.3"
+requests_mock = "^1.9.3"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.13.8"
+black = "^22.3.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

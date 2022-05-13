@@ -8,6 +8,8 @@ orbs:
 jobs:
   package:
     executor: python/default
+    docker:
+      - image: cimg/python:3.9
     parameters:
       app-dir:
         type: string
@@ -15,7 +17,7 @@ jobs:
       - checkout
       - python/install-packages:
           app-dir: << parameters.app-dir >>
-          args: --target ./
+          pkg-manager: poetry
       - run:
           name: Create zip file
           command: zip -r ../<< parameters.app-dir >>.zip .
@@ -67,6 +69,7 @@ workflows:
     jobs:
       - python/test:
           app-dir: pre-sentence-report-handler
+          version: '3.9'
       - package:
           app-dir: pre-sentence-report-handler
           context:
