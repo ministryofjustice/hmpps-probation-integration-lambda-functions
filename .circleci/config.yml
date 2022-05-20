@@ -12,5 +12,5 @@ workflows:
       - path-filtering/filter:
           name: check-for-changes
           mapping: |
-            allocation-handler/.* workflow-directory "allocation-handler"
+            workload-allocation-handler/.* workflow-directory "workload-allocation-handler"
             pre-sentence-report-handler/.* workflow-directory "pre-sentence-report-handler"

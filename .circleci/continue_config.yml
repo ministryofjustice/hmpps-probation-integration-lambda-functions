@@ -256,7 +256,7 @@ workflows:
       equal: [ << pipeline.parameters.workflow-directory >>, pre-sentence-report-handler ]
     jobs: *python-jobs
 
-  deploy-allocation-handler:
+  deploy-workload-allocation-handler:
     when:
-      equal: [ << pipeline.parameters.workflow-directory >>, allocation-handler ]
+      equal: [ << pipeline.parameters.workflow-directory >>, workload-allocation-handler ]
     jobs: *npm-jobs
