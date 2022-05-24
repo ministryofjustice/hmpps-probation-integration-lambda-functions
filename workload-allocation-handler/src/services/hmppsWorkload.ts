@@ -8,7 +8,9 @@ export interface AllocationMessage {
   description: string
   detailUrl: string
   occurredAt: Date
-  additionalInformation: Map<string, unknown>
+  additionalInformation: {
+    allocationId: string
+  }
   personReference: {
     identifiers: [
       {
@@ -17,7 +19,7 @@ export interface AllocationMessage {
       }
     ]
   }
-  senderReference: {
+  senderReference?: {
     // TODO this isn't part of the spec yet
     identifiers: [
       {
@@ -49,9 +51,12 @@ export default class HmppsWorkload {
     return new RestClient('HMPPS Workload', config.apis.hmppsWorkload, token)
   }
 
-  async getPersonAllocation(allocationId: string, token: string): Promise<PersonManagerDetails> {
+  async getPersonAllocationDetail(detailUrl: URL, token: string): Promise<PersonManagerDetails> {
+    if (!detailUrl.toString().startsWith(config.apis.hmppsWorkload.url)) {
+      logger.warn("Provided detailUrl doesn't match configured URL for HMPPS Workload API")
+    }
     const response = (await HmppsWorkload.restClient(token).get({
-      path: `/allocation/person/${allocationId}`,
+      path: new URL(detailUrl).pathname,
       raw: true,
     })) as Response
     logger.info(`Call to get allocation endpoint: Status=${response.status} Body=${response.body}`)

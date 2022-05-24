@@ -7,10 +7,11 @@
   "scripts": {
     "watch-ts": "tsc -w",
     "build": "tsc",
+    "postbuild": "cp package*.json build-info.json dist && cd dist && npm ci --omit=dev",
     "record-build-info": "node ./bin/record-build-info",
     "lint": "eslint . --cache --max-warnings 0",
     "lint-fix": "eslint . --cache --fix",
-    "test": "jest",
+    "test": "jest --runInBand",
     "security_audit": "npx audit-ci --config audit-ci.json",
     "clean": "rm -rf dist build node_modules"
   },
@@ -80,6 +81,7 @@
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^5.22.0",
+    "aws-sdk": "^2.1140.0",
     "concurrently": "^7.1.0",
     "eslint": "^8.14.0",
     "eslint-config-airbnb-base": "^15.0.0",

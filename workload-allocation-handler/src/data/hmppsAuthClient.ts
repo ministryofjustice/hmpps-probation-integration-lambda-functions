@@ -3,51 +3,38 @@ import { URLSearchParams } from 'url'
 
 import logger from '../../logger'
 import config from '../config'
-import generateOauthClientToken from '../authentication/clientCredentials'
 import RestClient from './restClient'
+import ParameterStore from './parameterStore'
 
 const timeoutSpec = config.apis.hmppsAuth.timeout
 const hmppsAuthUrl = config.apis.hmppsAuth.url
 
-function getSystemClientTokenFromHmppsAuth(username?: string): Promise<superagent.Response> {
-  const clientToken = generateOauthClientToken(
-    config.apis.hmppsAuth.systemClientId,
-    config.apis.hmppsAuth.systemClientSecret
-  )
-
-  const grantRequest = new URLSearchParams({
-    grant_type: 'client_credentials',
-    ...(username && { username }),
-  }).toString()
-
-  logger.info(`${grantRequest} HMPPS Auth request for client id '${config.apis.hmppsAuth.systemClientId}''`)
-
-  return superagent
-    .post(`${hmppsAuthUrl}/oauth/token`)
-    .set('Authorization', clientToken)
-    .set('content-type', 'application/x-www-form-urlencoded')
-    .send(grantRequest)
-    .timeout(timeoutSpec)
-}
-
 export default class HmppsAuthClient {
+  constructor(private parameterStore: ParameterStore) {}
+
   private static restClient(token: string): RestClient {
     return new RestClient('HMPPS Auth Client', config.apis.hmppsAuth, token)
   }
 
   async getSystemClientToken(username?: string): Promise<string> {
-    // const key = username || '%ANONYMOUS%'
-    //
-    // const token = await this.tokenStore.getToken(key)
-    // if (token) {
-    //   return token
-    // }
+    const [clientId, clientSecret] = await Promise.all([
+      this.parameterStore.getParameter(config.apis.hmppsAuth.clientIdParameter),
+      this.parameterStore.getParameter(config.apis.hmppsAuth.clientSecretParamater),
+    ])
 
-    const newToken = await getSystemClientTokenFromHmppsAuth(username)
+    const grantRequest = new URLSearchParams({
+      grant_type: 'client_credentials',
+      ...(username && { username }),
+    }).toString()
 
-    // set TTL slightly less than expiry of token. Async but no need to wait
-    // await this.tokenStore.setToken(key, newToken.body.access_token, newToken.body.expires_in - 60)
+    logger.info(`${grantRequest} HMPPS Auth request for client id '${clientId}'`)
 
-    return newToken.body.access_token
+    const response = await superagent
+      .post(`${hmppsAuthUrl}/oauth/token`)
+      .auth(clientId, clientSecret)
+      .set('content-type', 'application/x-www-form-urlencoded')
+      .send(grantRequest)
+      .timeout(timeoutSpec)
+    return response.body.access_token
   }
 }
