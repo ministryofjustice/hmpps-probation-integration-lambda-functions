@@ -36,7 +36,7 @@ const handler = async (event: SQSEvent, context: Context): Promise<void> => {
       datetime: allocation.createdDate,
       staffCode: allocation.staffCode,
       teamCode: allocation.teamCode,
-      reason: '??', // TODO what should this be?
+      reason: 'OTH', // "Other"
     },
     token
   )
