@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Context, SQSEvent } from 'aws-lambda'
+import { SNSMessage } from 'aws-lambda/trigger/sns'
 import promClient from 'prom-client'
 import logger from '../logger'
 import HmppsAuthClient from './data/hmppsAuthClient'
@@ -18,7 +19,8 @@ const handler = async (event: SQSEvent, context: Context): Promise<void> => {
   logger.debug(`Context: ${JSON.stringify(context, null, 2)}`)
 
   // Get values from message
-  const message = JSON.parse(event.Records[0].body) as AllocationMessage
+  const body = JSON.parse(event.Records[0].body) as SNSMessage
+  const message = JSON.parse(body.Message) as AllocationMessage
   const username = message.senderReference?.identifiers?.find(id => id.type === 'username')?.value
   const crn = message.personReference.identifiers.find(id => id.type === 'CRN').value
   const detailUrl = new URL(message.detailUrl)
