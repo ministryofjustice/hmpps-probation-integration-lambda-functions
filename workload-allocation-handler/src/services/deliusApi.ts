@@ -18,7 +18,7 @@ export default class DeliusApi {
   async allocatePerson(crn: string, allocation: AllocationRequest, token: string): Promise<void> {
     const response = (await DeliusApi.restClient(token).post({
       path: `/v1/offenders/${crn}/allocations`,
-      data: { allocation },
+      data: allocation,
       responseType: 'json',
       raw: true,
     })) as Response
