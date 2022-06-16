@@ -22,6 +22,6 @@ export default class DeliusApi {
       responseType: 'json',
       raw: true,
     })) as Response
-    logger.info(`Call to post allocations endpoint: Status=${response.status} Body=${JSON.stringify(response.body)}`)
+    logger.info(`Call to post allocations endpoint: Status=${response.status} Body=${response.body}`)
   }
 }
