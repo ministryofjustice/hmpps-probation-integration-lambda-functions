@@ -1,3 +1,4 @@
+import { Response } from 'superagent'
 import logger from '../../logger'
 import config from '../config'
 import RestClient from '../data/restClient'
@@ -59,7 +60,7 @@ export default class HmppsWorkload {
       path: new URL(detailUrl).pathname,
       raw: true,
     })) as Response
-    logger.info(`Call to get allocation endpoint: Status=${response.status} Body=${response.body}`)
-    return (await response.json()) as Promise<PersonManagerDetails>
+    logger.info(`Call to get allocation endpoint: Status=${response.status} Body=${JSON.stringify(response.body)}`)
+    return response.body as PersonManagerDetails
   }
 }

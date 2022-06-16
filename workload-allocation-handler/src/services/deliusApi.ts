@@ -1,3 +1,4 @@
+import { Response } from 'superagent'
 import logger from '../../logger'
 import config from '../config'
 import RestClient from '../data/restClient'
@@ -21,6 +22,6 @@ export default class DeliusApi {
       responseType: 'json',
       raw: true,
     })) as Response
-    logger.info(`Call to post allocations endpoint: Status=${response.status} Body=${response.body}`)
+    logger.info(`Call to post allocations endpoint: Status=${response.status} Body=${JSON.stringify(response.body)}`)
   }
 }
