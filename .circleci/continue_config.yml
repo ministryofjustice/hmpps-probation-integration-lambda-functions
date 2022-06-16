@@ -39,7 +39,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: Install Dependencies
+          name: Install dependencies
           command: npm ci --no-audit
       - save_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
@@ -47,23 +47,17 @@ jobs:
             - node_modules
             - ~/.cache
       - run:
+          name: Build
           command: |
-            npm run build
             DATE=$(date '+%Y-%m-%d')
             export BUILD_NUMBER=${DATE}.${CIRCLE_BUILD_NUM}
             export GIT_REF="$CIRCLE_SHA1"
             npm run record-build-info
-      - run: # Run linter after build because the integration test code depend on compiled typescript...
-          name: Linter check
-          command: npm run lint
+            npm run build
       - persist_to_workspace:
           root: .
           paths:
-            - node_modules
-            - build-info.json
-            - build
             - dist
-            - .cache/Cypress
 
   npm-test:
     executor:
@@ -72,10 +66,24 @@ jobs:
     steps:
       - attach_workspace:
           at: ./
+      - run:
+          name: Update npm
+          command: 'npm install -g npm@latest'
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: unit tests
+          name: Install dependencies
+          command: npm ci --no-audit
+      - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+            - ~/.cache
+      - run: # Run linter after build because the integration test code depend on compiled typescript...
+          name: Linter check
+          command: npm run lint
+      - run:
+          name: Run tests
           command: npm run test
       - store_test_results:
           path: test_results
@@ -106,12 +114,20 @@ jobs:
   package:
     docker:
       - image: cimg/base:current
+    parameters:
+      directory:
+        type: string
+        default: .
     steps:
       - attach_workspace:
           at: ./
       - run:
           name: Create zip file
-          command: zip -r package.zip .
+          command: |
+            working_directory=$(pwd)
+            cd '<< parameters.directory >>'
+            zip -r package.zip .
+            mv package.zip "${working_directory}"
       - persist_to_workspace:
           name: Persist zip file
           root: .
@@ -214,11 +230,13 @@ workflows:
             - checkout-workspace
       - npm-test:
           requires:
-            - npm-build
+            - checkout-workspace
       - package:
+          directory: dist
           context:
             - hmpps-common-vars
           requires:
+            - npm-build
             - npm-test
       - <<: *deploy-to-test
       - <<: *deploy-to-pre-prod
@@ -256,7 +274,7 @@ workflows:
       equal: [ << pipeline.parameters.workflow-directory >>, pre-sentence-report-handler ]
     jobs: *python-jobs
 
-  deploy-allocation-handler:
+  deploy-workload-allocation-handler:
     when:
-      equal: [ << pipeline.parameters.workflow-directory >>, allocation-handler ]
+      equal: [ << pipeline.parameters.workflow-directory >>, workload-allocation-handler ]
     jobs: *npm-jobs
