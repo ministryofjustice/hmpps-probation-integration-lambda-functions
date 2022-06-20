@@ -20,28 +20,35 @@ const handler = async (event: SQSEvent, context: Context): Promise<void> => {
 
   // Get values from message
   const body = JSON.parse(event.Records[0].body) as SNSMessage
-  const message = JSON.parse(body.Message) as AllocationMessage
-  const username = message.senderReference?.identifiers?.find(id => id.type === 'username')?.value
-  const crn = message.personReference.identifiers.find(id => id.type === 'CRN').value
-  const detailUrl = new URL(message.detailUrl)
 
-  // Get token from HMPPS Auth
-  const token = await hmppsAuthClient.getSystemClientToken(username)
+  // Determine message event type
+  const eventType: string = body.MessageAttributes.eventType.Value
 
-  // Get current state of allocation
-  const allocation = await hmppsWorkload.getPersonAllocationDetail(detailUrl, token)
+  // Person Allocation
+  if (eventType === 'person.community.manager.allocated') {
+    const message = JSON.parse(body.Message) as AllocationMessage
+    const username = message.senderReference?.identifiers?.find(id => id.type === 'username')?.value
+    const crn = message.personReference.identifiers.find(id => id.type === 'CRN').value
+    const detailUrl = new URL(message.detailUrl)
 
-  // Create the allocation in Delius
-  await deliusApi.allocatePerson(
-    crn,
-    {
-      datetime: allocation.createdDate,
-      staffCode: allocation.staffCode,
-      teamCode: allocation.teamCode,
-      reason: 'OTH', // "Other"
-    },
-    token
-  )
+    // Get token from HMPPS Auth
+    const token = await hmppsAuthClient.getSystemClientToken(username)
+
+    // Get current state of allocation
+    const allocation = await hmppsWorkload.getPersonAllocationDetail(detailUrl, token)
+
+    // Create the allocation in Delius
+    await deliusApi.allocatePerson(
+      crn,
+      {
+        datetime: allocation.createdDate,
+        staffCode: allocation.staffCode,
+        teamCode: allocation.teamCode,
+        reason: 'OTH', // "Other"
+      },
+      token
+    )
+  }
 }
 
 export default handler
