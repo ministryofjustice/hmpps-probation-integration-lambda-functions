@@ -17,7 +17,7 @@ export default function sanitise(error: UnsanitisedError): SanitisedError {
       text: error.response.text,
       status: error.response.status,
       headers: error.response.headers,
-      data: error.response.body,
+      data: error.response.body.toString('ascii'),
       message: error.message,
       stack: error.stack,
     }
