@@ -24,4 +24,29 @@ export default class DeliusApi {
     })) as Response
     logger.info(`Call to post allocations endpoint: Status=${response.status} Body=${response.body}`)
   }
+
+  async allocateEvent(crn: string, eventId: number, allocation: AllocationRequest, token: string): Promise<void> {
+    const response = (await DeliusApi.restClient(token).post({
+      path: `/v1/offenders/${crn}/events/${eventId}/allocations`,
+      data: { ...allocation },
+      responseType: 'json',
+      raw: true,
+    })) as Response
+    logger.info(`Call to post event allocations endpoint: Status=${response.status} Body=${response.body}`)
+  }
+
+  async allocateRequirement(
+    crn: string,
+    requirementId: number,
+    allocation: AllocationRequest,
+    token: string
+  ): Promise<void> {
+    const response = (await DeliusApi.restClient(token).post({
+      path: `/v1/offenders/${crn}/requirements/${requirementId}/allocations`,
+      data: { ...allocation },
+      responseType: 'json',
+      raw: true,
+    })) as Response
+    logger.info(`Call to post event allocations endpoint: Status=${response.status} Body=${response.body}`)
+  }
 }

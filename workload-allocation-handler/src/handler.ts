@@ -49,6 +49,60 @@ const handler = async (event: SQSEvent, context: Context): Promise<void> => {
       token
     )
   }
+
+  // Event Allocation
+  if (eventType === 'event.community.manager.allocated') {
+    const message = JSON.parse(body.Message) as AllocationMessage
+    const username = message.senderReference?.identifiers?.find(id => id.type === 'username')?.value
+    const crn = message.personReference.identifiers.find(id => id.type === 'CRN').value
+    const detailUrl = new URL(message.detailUrl)
+
+    // Get token from HMPPS Auth
+    const token = await hmppsAuthClient.getSystemClientToken(username)
+
+    // Get current state of allocation
+    const allocation = await hmppsWorkload.getEventAllocationDetail(detailUrl, token)
+
+    // Create the allocation in Delius
+    await deliusApi.allocateEvent(
+      crn,
+      allocation.eventId,
+      {
+        datetime: allocation.createdDate,
+        staffCode: allocation.staffCode,
+        teamCode: allocation.teamCode,
+        reason: 'OTH', // "Other"
+      },
+      token
+    )
+  }
+
+  // Requirement Allocation
+  if (eventType === 'requirement.community.manager.allocated') {
+    const message = JSON.parse(body.Message) as AllocationMessage
+    const username = message.senderReference?.identifiers?.find(id => id.type === 'username')?.value
+    const crn = message.personReference.identifiers.find(id => id.type === 'CRN').value
+    const detailUrl = new URL(message.detailUrl)
+
+    // Get token from HMPPS Auth
+    const token = await hmppsAuthClient.getSystemClientToken(username)
+
+    // Get current state of allocation
+    const allocation = await hmppsWorkload.getRequirementAllocationDetail(detailUrl, token)
+
+    // Create the allocation in Delius
+    await deliusApi.allocateRequirement(
+      crn,
+      allocation.eventId,
+      {
+        datetime: allocation.createdDate,
+        staffCode: allocation.staffCode,
+        teamCode: allocation.teamCode,
+        reason: 'OTH', // "Other"
+      },
+      token
+    )
+  }
 }
 
 export default handler
