@@ -5,7 +5,12 @@ import promClient from 'prom-client'
 import logger from '../logger'
 import HmppsAuthClient from './data/hmppsAuthClient'
 import DeliusApi from './services/deliusApi'
-import HmppsWorkload, { AllocationMessage } from './services/hmppsWorkload'
+import HmppsWorkload, {
+  AllocationMessage,
+  PersonManagerDetails,
+  EventManagerDetails,
+  RequirementManagerDetails,
+} from './services/hmppsWorkload'
 import ParameterStore from './data/parameterStore'
 
 promClient.collectDefaultMetrics()
@@ -35,7 +40,7 @@ const handler = async (event: SQSEvent, context: Context): Promise<void> => {
     const token = await hmppsAuthClient.getSystemClientToken(username)
 
     // Get current state of allocation
-    const allocation = await hmppsWorkload.getPersonAllocationDetail(detailUrl, token)
+    const allocation: PersonManagerDetails = await hmppsWorkload.getPersonAllocationDetail(detailUrl, token)
 
     // Create the allocation in Delius
     await deliusApi.allocatePerson(
@@ -61,7 +66,7 @@ const handler = async (event: SQSEvent, context: Context): Promise<void> => {
     const token = await hmppsAuthClient.getSystemClientToken(username)
 
     // Get current state of allocation
-    const allocation = await hmppsWorkload.getEventAllocationDetail(detailUrl, token)
+    const allocation: EventManagerDetails = await hmppsWorkload.getEventAllocationDetail(detailUrl, token)
 
     // Create the allocation in Delius
     await deliusApi.allocateEvent(
@@ -88,12 +93,12 @@ const handler = async (event: SQSEvent, context: Context): Promise<void> => {
     const token = await hmppsAuthClient.getSystemClientToken(username)
 
     // Get current state of allocation
-    const allocation = await hmppsWorkload.getRequirementAllocationDetail(detailUrl, token)
+    const allocation: RequirementManagerDetails = await hmppsWorkload.getRequirementAllocationDetail(detailUrl, token)
 
     // Create the allocation in Delius
     await deliusApi.allocateRequirement(
       crn,
-      allocation.eventId,
+      allocation.requirementId,
       {
         datetime: allocation.createdDate,
         staffCode: allocation.staffCode,

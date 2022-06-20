@@ -31,7 +31,7 @@ export interface AllocationMessage {
   }
 }
 
-interface PersonManagerDetails {
+export interface PersonManagerDetails {
   id: string
   staffId: number
   staffCode: string
@@ -47,7 +47,7 @@ interface PersonManagerDetails {
   staffSurname: string
 }
 
-interface EventManagerDetails {
+export interface EventManagerDetails {
   id: string
   staffId: number
   staffCode: string
@@ -58,7 +58,7 @@ interface EventManagerDetails {
   eventId: number
 }
 
-interface RequirementManagerDetails {
+export interface RequirementManagerDetails {
   id: string
   staffId: number
   staffCode: string
