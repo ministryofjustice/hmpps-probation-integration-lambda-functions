@@ -2,6 +2,7 @@ import sanitisedError, { UnsanitisedError } from './sanitisedError'
 
 describe('sanitised error', () => {
   it('it should omit the request headers from the error object ', () => {
+    const errorBuffer = Buffer.from('{ content: "hello" }').toString('base64')
     const error = {
       name: '',
       status: 404,
@@ -19,7 +20,7 @@ describe('sanitised error', () => {
         status: 404,
         statusText: 'Not found',
         text: { details: 'details' },
-        body: { content: 'hello' },
+        body: errorBuffer,
       },
       message: 'Not Found',
       stack: 'stack description',
@@ -31,7 +32,7 @@ describe('sanitised error', () => {
       stack: 'stack description',
       status: 404,
       text: { details: 'details' },
-      data: { content: 'hello' },
+      data: errorBuffer,
     })
   })
 
