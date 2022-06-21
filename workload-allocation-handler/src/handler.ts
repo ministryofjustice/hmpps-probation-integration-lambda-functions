@@ -56,7 +56,7 @@ const handler = async (event: SQSEvent, context: Context): Promise<void> => {
   }
 
   // Event Allocation
-  if (eventType === 'event.community.manager.allocated') {
+  if (eventType === 'event.manager.allocated') {
     const message = JSON.parse(body.Message) as AllocationMessage
     const username = message.senderReference?.identifiers?.find(id => id.type === 'username')?.value
     const crn = message.personReference.identifiers.find(id => id.type === 'CRN').value
@@ -83,7 +83,7 @@ const handler = async (event: SQSEvent, context: Context): Promise<void> => {
   }
 
   // Requirement Allocation
-  if (eventType === 'requirement.community.manager.allocated') {
+  if (eventType === 'requirement.manager.allocated') {
     const message = JSON.parse(body.Message) as AllocationMessage
     const username = message.senderReference?.identifiers?.find(id => id.type === 'username')?.value
     const crn = message.personReference.identifiers.find(id => id.type === 'CRN').value
