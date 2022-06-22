@@ -47,6 +47,8 @@ export default class DeliusApi {
       responseType: 'json',
       raw: true,
     })) as Response
-    logger.info(`Call to post requirement allocations endpoint CRN=${crn} Status=${response.status} Body=${response.body}`)
+    logger.info(
+      `Call to post requirement allocations endpoint CRN=${crn} Status=${response.status} Body=${response.body}`
+    )
   }
 }
