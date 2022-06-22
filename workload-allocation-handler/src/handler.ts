@@ -100,7 +100,7 @@ export const handler = async (event: SQSEvent): Promise<void> => {
   // logger.debug(`Event: ${JSON.stringify(event, null, 2)}`)
   logger.debug(`Messages Received: ${event.Records.length}`)
 
-  for ( record in event.Records ) {
+  event.Records.forEach(async record => {
     // Get values from message
     const body = JSON.parse(record.body) as SNSMessage
 
@@ -125,7 +125,7 @@ export const handler = async (event: SQSEvent): Promise<void> => {
     else if (eventType === 'requirement.manager.allocated') {
       await allocateRequirementManager(body)
     }
-  }
+  })
 }
 
 export default handler
