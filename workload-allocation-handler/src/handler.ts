@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Context, SQSEvent } from 'aws-lambda'
+import { SQSEvent } from 'aws-lambda'
 import { SNSMessage } from 'aws-lambda/trigger/sns'
 import promClient from 'prom-client'
 import logger from '../logger'
@@ -96,9 +96,8 @@ export const allocateRequirementManager = async (body: SNSMessage) => {
   )
 }
 
-export const handler = async (event: SQSEvent, context: Context): Promise<void> => {
+export const handler = async (event: SQSEvent): Promise<void> => {
   logger.debug(`Event: ${JSON.stringify(event, null, 2)}`)
-
   // Get values from message
   const body = JSON.parse(event.Records[0].body) as SNSMessage
 
