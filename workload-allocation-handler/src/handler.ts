@@ -98,29 +98,33 @@ export const allocateRequirementManager = async (body: SNSMessage) => {
 
 export const handler = async (event: SQSEvent): Promise<void> => {
   // logger.debug(`Event: ${JSON.stringify(event, null, 2)}`)
-  // Get values from message
-  const body = JSON.parse(event.Records[0].body) as SNSMessage
+  logger.debug(`Messages Received: ${event.Records.length}`)
 
-  // Determine message event type
-  const eventType: string = body.MessageAttributes.eventType.Value
+  for ( record in event.Records ) {
+    // Get values from message
+    const body = JSON.parse(record.body) as SNSMessage
 
-  // Debug logging
-  logger.debug(`Body: ${JSON.stringify(body)}`)
-  logger.debug(`Event Type: ${eventType}`)
+    // Determine message event type
+    const eventType: string = body.MessageAttributes.eventType.Value
 
-  // Person Allocation
-  if (eventType === 'person.community.manager.allocated') {
-    await allocateCommunityManager(body)
-  }
+    // Debug logging
+    logger.debug(`Body: ${JSON.stringify(body)}`)
+    logger.debug(`Event Type: ${eventType}`)
 
-  // Event Allocation
-  else if (eventType === 'event.manager.allocated') {
-    await allocateEventManager(body)
-  }
+    // Person Allocation
+    if (eventType === 'person.community.manager.allocated') {
+      await allocateCommunityManager(body)
+    }
 
-  // Requirement Allocation
-  else if (eventType === 'requirement.manager.allocated') {
-    await allocateRequirementManager(body)
+    // Event Allocation
+    else if (eventType === 'event.manager.allocated') {
+      await allocateEventManager(body)
+    }
+
+    // Requirement Allocation
+    else if (eventType === 'requirement.manager.allocated') {
+      await allocateRequirementManager(body)
+    }
   }
 }
 
