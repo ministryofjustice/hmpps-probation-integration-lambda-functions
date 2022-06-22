@@ -97,12 +97,16 @@ export const allocateRequirementManager = async (body: SNSMessage) => {
 }
 
 export const handler = async (event: SQSEvent): Promise<void> => {
-  logger.debug(`Event: ${JSON.stringify(event, null, 2)}`)
+  // logger.debug(`Event: ${JSON.stringify(event, null, 2)}`)
   // Get values from message
   const body = JSON.parse(event.Records[0].body) as SNSMessage
 
   // Determine message event type
   const eventType: string = body.MessageAttributes.eventType.Value
+
+  // Debug logging
+  logger.debug(`Body: ${body}`)
+  logger.debug(`Event Type: ${eventType}`)
 
   // Person Allocation
   if (eventType === 'person.community.manager.allocated') {
