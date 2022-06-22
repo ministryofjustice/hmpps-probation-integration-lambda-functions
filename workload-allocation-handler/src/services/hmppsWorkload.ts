@@ -1,3 +1,4 @@
+import { Response } from 'superagent'
 import logger from '../../logger'
 import config from '../config'
 import RestClient from '../data/restClient'
@@ -30,7 +31,7 @@ export interface AllocationMessage {
   }
 }
 
-interface PersonManagerDetails {
+export interface PersonManagerDetails {
   id: string
   staffId: number
   staffCode: string
@@ -46,6 +47,29 @@ interface PersonManagerDetails {
   staffSurname: string
 }
 
+export interface EventManagerDetails {
+  id: string
+  staffId: number
+  staffCode: string
+  teamCode: string
+  providerCode: string
+  createdBy: string
+  createdDate: Date
+  eventId: number
+}
+
+export interface RequirementManagerDetails {
+  id: string
+  staffId: number
+  staffCode: string
+  teamCode: string
+  providerCode: string
+  createdBy: string
+  createdDate: Date
+  eventId: number
+  requirementId: number
+}
+
 export default class HmppsWorkload {
   private static restClient(token: string): RestClient {
     return new RestClient('HMPPS Workload', config.apis.hmppsWorkload, token)
@@ -59,7 +83,31 @@ export default class HmppsWorkload {
       path: new URL(detailUrl).pathname,
       raw: true,
     })) as Response
-    logger.info(`Call to get allocation endpoint: Status=${response.status} Body=${response.body}`)
-    return (await response.json()) as Promise<PersonManagerDetails>
+    logger.info(`Call to get allocation endpoint: Status=${response.status} Body=${JSON.stringify(response.body)}`)
+    return response.body as PersonManagerDetails
+  }
+
+  async getEventAllocationDetail(detailUrl: URL, token: string): Promise<EventManagerDetails> {
+    if (!detailUrl.toString().startsWith(config.apis.hmppsWorkload.url)) {
+      logger.warn("Provided detailUrl doesn't match configured URL for HMPPS Workload API")
+    }
+    const response = (await HmppsWorkload.restClient(token).get({
+      path: new URL(detailUrl).pathname,
+      raw: true,
+    })) as Response
+    logger.info(`Call to get allocation endpoint: Status=${response.status} Body=${JSON.stringify(response.body)}`)
+    return response.body as EventManagerDetails
+  }
+
+  async getRequirementAllocationDetail(detailUrl: URL, token: string): Promise<RequirementManagerDetails> {
+    if (!detailUrl.toString().startsWith(config.apis.hmppsWorkload.url)) {
+      logger.warn("Provided detailUrl doesn't match configured URL for HMPPS Workload API")
+    }
+    const response = (await HmppsWorkload.restClient(token).get({
+      path: new URL(detailUrl).pathname,
+      raw: true,
+    })) as Response
+    logger.info(`Call to get allocation endpoint: Status=${response.status} Body=${JSON.stringify(response.body)}`)
+    return response.body as RequirementManagerDetails
   }
 }

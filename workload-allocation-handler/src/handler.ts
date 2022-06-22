@@ -1,44 +1,44 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Context, SQSEvent } from 'aws-lambda'
+import { SQSEvent } from 'aws-lambda'
+import { SNSMessage } from 'aws-lambda/trigger/sns'
+
 import promClient from 'prom-client'
 import logger from '../logger'
-import HmppsAuthClient from './data/hmppsAuthClient'
-import DeliusApi from './services/deliusApi'
-import HmppsWorkload, { AllocationMessage } from './services/hmppsWorkload'
-import ParameterStore from './data/parameterStore'
+import { allocateCommunityManager, allocateEventManager, allocateRequirementManager } from './allocations'
 
 promClient.collectDefaultMetrics()
 
-const hmppsAuthClient = new HmppsAuthClient(new ParameterStore())
-const deliusApi = new DeliusApi()
-const hmppsWorkload = new HmppsWorkload()
+export const handler = async (event: SQSEvent): Promise<void> => {
+  // logger.debug(`Event: ${JSON.stringify(event, null, 2)}`)
+  logger.debug(`Messages Received: ${event.Records.length}`)
 
-const handler = async (event: SQSEvent, context: Context): Promise<void> => {
-  logger.debug(`Event: ${JSON.stringify(event, null, 2)}`)
-  logger.debug(`Context: ${JSON.stringify(context, null, 2)}`)
+  await Promise.all(
+    event.Records.map(async record => {
+      // Get values from message
+      const body = JSON.parse(record.body) as SNSMessage
 
-  // Get values from message
-  const message = JSON.parse(event.Records[0].body) as AllocationMessage
-  const username = message.senderReference?.identifiers?.find(id => id.type === 'username')?.value
-  const crn = message.personReference.identifiers.find(id => id.type === 'CRN').value
-  const detailUrl = new URL(message.detailUrl)
+      // Determine message event type
+      const eventType: string = body.MessageAttributes.eventType.Value
 
-  // Get token from HMPPS Auth
-  const token = await hmppsAuthClient.getSystemClientToken(username)
+      // Debug logging
+      logger.debug(`Body: ${JSON.stringify(body)}`)
+      logger.debug(`Event Type: ${eventType}`)
 
-  // Get current state of allocation
-  const allocation = await hmppsWorkload.getPersonAllocationDetail(detailUrl, token)
+      // Person Allocation
+      if (eventType === 'person.community.manager.allocated') {
+        await allocateCommunityManager(body)
+      }
 
-  // Create the allocation in Delius
-  await deliusApi.allocatePerson(
-    crn,
-    {
-      datetime: allocation.createdDate,
-      staffCode: allocation.staffCode,
-      teamCode: allocation.teamCode,
-      reason: 'OTH', // "Other"
-    },
-    token
+      // Event Allocation
+      else if (eventType === 'event.manager.allocated') {
+        await allocateEventManager(body)
+      }
+
+      // Requirement Allocation
+      else if (eventType === 'requirement.manager.allocated') {
+        await allocateRequirementManager(body)
+      }
+    })
   )
 }
 

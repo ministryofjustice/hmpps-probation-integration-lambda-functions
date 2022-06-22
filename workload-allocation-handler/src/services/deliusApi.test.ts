@@ -35,4 +35,44 @@ describe('deliusApiClient', () => {
       )
     })
   })
+
+  describe('allocateEvent', () => {
+    it('should call the correct endpoint', async () => {
+      fakeDeliusApi
+        .post('/v1/offenders/A123456/events/111111/allocations')
+        .matchHeader('Authorization', 'Bearer access-token')
+        .reply(200, '{ "id": 1 }')
+      await deliusApiClient.allocateEvent(
+        'A123456',
+        111111,
+        {
+          datetime: new Date(),
+          staffCode: 'N01A001',
+          teamCode: 'N01TEAM',
+          reason: 'TEST',
+        },
+        'access-token'
+      )
+    })
+  })
+
+  describe('allocateRequirement', () => {
+    it('should call the correct endpoint', async () => {
+      fakeDeliusApi
+        .post('/v1/offenders/A123456/requirements/111111/allocations')
+        .matchHeader('Authorization', 'Bearer access-token')
+        .reply(200, '{ "id": 1 }')
+      await deliusApiClient.allocateRequirement(
+        'A123456',
+        111111,
+        {
+          datetime: new Date(),
+          staffCode: 'N01A001',
+          teamCode: 'N01TEAM',
+          reason: 'TEST',
+        },
+        'access-token'
+      )
+    })
+  })
 })
