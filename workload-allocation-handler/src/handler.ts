@@ -110,17 +110,17 @@ export const handler = async (event: SQSEvent): Promise<void> => {
 
   // Person Allocation
   if (eventType === 'person.community.manager.allocated') {
-    allocateCommunityManager(body)
+    await allocateCommunityManager(body)
   }
 
   // Event Allocation
   else if (eventType === 'event.manager.allocated') {
-    allocateEventManager(body)
+    await allocateEventManager(body)
   }
 
   // Requirement Allocation
   else if (eventType === 'requirement.manager.allocated') {
-    allocateRequirementManager(body)
+    await allocateRequirementManager(body)
   }
 }
 
