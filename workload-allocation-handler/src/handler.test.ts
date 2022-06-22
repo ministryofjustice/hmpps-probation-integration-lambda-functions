@@ -4,7 +4,7 @@ import { allocateCommunityManager, allocateEventManager, allocateRequirementMana
 
 jest.mock('./allocations.ts')
 
-describe('Test person allocation handler', function () {
+describe('Test person allocation handler', () => {
   const record: Partial<SQSRecord> = {
     body: '{ "MessageAttributes": { "eventType": { "Value": "person.community.manager.allocated" } } }',
   }
@@ -22,7 +22,7 @@ describe('Test person allocation handler', function () {
   })
 })
 
-describe('Test event allocation handler', function () {
+describe('Test event allocation handler', () => {
   const record: Partial<SQSRecord> = {
     body: '{ "MessageAttributes": { "eventType": { "Value": "event.manager.allocated" } } }',
   }
@@ -40,7 +40,7 @@ describe('Test event allocation handler', function () {
   })
 })
 
-describe('Test requirement allocation handler', function () {
+describe('Test requirement allocation handler', () => {
   const record: Partial<SQSRecord> = {
     body: '{ "MessageAttributes": { "eventType": { "Value": "requirement.manager.allocated" } } }',
   }
