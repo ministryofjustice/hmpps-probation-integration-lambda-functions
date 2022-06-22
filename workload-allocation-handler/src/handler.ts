@@ -105,7 +105,7 @@ export const handler = async (event: SQSEvent): Promise<void> => {
   const eventType: string = body.MessageAttributes.eventType.Value
 
   // Debug logging
-  logger.debug(`Body: ${body}`)
+  logger.debug(`Body: ${JSON.stringify(body)}`)
   logger.debug(`Event Type: ${eventType}`)
 
   // Person Allocation
