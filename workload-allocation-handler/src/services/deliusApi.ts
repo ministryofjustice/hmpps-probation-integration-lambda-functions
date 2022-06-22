@@ -22,7 +22,7 @@ export default class DeliusApi {
       responseType: 'json',
       raw: true,
     })) as Response
-    logger.info(`Call to post allocations endpoint: Status=${response.status} Body=${response.body}`)
+    logger.info(`Call to post person allocations endpoint CRN=${crn} Status=${response.status} Body=${response.body}`)
   }
 
   async allocateEvent(crn: string, eventId: number, allocation: AllocationRequest, token: string): Promise<void> {
@@ -32,7 +32,7 @@ export default class DeliusApi {
       responseType: 'json',
       raw: true,
     })) as Response
-    logger.info(`Call to post event allocations endpoint: Status=${response.status} Body=${response.body}`)
+    logger.info(`Call to post event allocations endpoint CRN=${crn} Status=${response.status} Body=${response.body}`)
   }
 
   async allocateRequirement(
@@ -47,6 +47,6 @@ export default class DeliusApi {
       responseType: 'json',
       raw: true,
     })) as Response
-    logger.info(`Call to post event allocations endpoint: Status=${response.status} Body=${response.body}`)
+    logger.info(`Call to post requirement allocations endpoint CRN=${crn} Status=${response.status} Body=${response.body}`)
   }
 }
