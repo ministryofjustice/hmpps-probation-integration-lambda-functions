@@ -9,7 +9,7 @@ describe('Test person allocation handler', () => {
     body: '{ "MessageAttributes": { "eventType": { "Value": "person.community.manager.allocated" } } }',
   }
 
-  it('verifies successful response', async () => {
+  it('Verifies successful dispatch', async () => {
     const event: SQSEvent = {
       Records: [record as SQSRecord],
     }
@@ -27,7 +27,7 @@ describe('Test event allocation handler', () => {
     body: '{ "MessageAttributes": { "eventType": { "Value": "event.manager.allocated" } } }',
   }
 
-  it('verifies successful response', async () => {
+  it('Verifies successful dispatch', async () => {
     const event: SQSEvent = {
       Records: [record as SQSRecord],
     }
@@ -45,7 +45,7 @@ describe('Test requirement allocation handler', () => {
     body: '{ "MessageAttributes": { "eventType": { "Value": "requirement.manager.allocated" } } }',
   }
 
-  it('verifies successful response', async () => {
+  it('Verifies successful dispatch', async () => {
     const event: SQSEvent = {
       Records: [record as SQSRecord],
     }
