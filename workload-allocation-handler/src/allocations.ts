@@ -40,7 +40,7 @@ export const allocateCommunityManager = async (body: SNSMessage) => {
       datetime: allocation.createdDate,
       staffCode: allocation.staffCode,
       teamCode: allocation.teamCode,
-      reason: 'OTH', // "Other"
+      reason: 'IN1', // "Initial Allocation"
     },
     token
   )
@@ -63,7 +63,7 @@ export const allocateEventManager = async (body: SNSMessage) => {
       datetime: allocation.createdDate,
       staffCode: allocation.staffCode,
       teamCode: allocation.teamCode,
-      reason: 'OTH', // "Other"
+      reason: 'INT', // "Initial Allocation"
     },
     token
   )
@@ -86,7 +86,7 @@ export const allocateRequirementManager = async (body: SNSMessage) => {
       datetime: allocation.createdDate,
       staffCode: allocation.staffCode,
       teamCode: allocation.teamCode,
-      reason: 'OTH', // "Other"
+      reason: 'IN1', // "Initial Allocation"
     },
     token
   )
