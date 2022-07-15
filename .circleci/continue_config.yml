@@ -24,7 +24,7 @@ jobs:
       - persist_to_workspace:
           root: << pipeline.parameters.workflow-directory >>
           paths:
-            - '*'
+            - "*"
 
   npm-build:
     executor:
@@ -35,7 +35,7 @@ jobs:
           at: ./
       - run:
           name: Update npm
-          command: 'npm install -g npm@latest'
+          command: "npm install -g npm@latest"
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
@@ -68,7 +68,7 @@ jobs:
           at: ./
       - run:
           name: Update npm
-          command: 'npm install -g npm@latest'
+          command: "npm install -g npm@latest"
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
@@ -100,7 +100,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - '*'
+            - "*"
 
   python-test:
     executor: python/default
@@ -240,8 +240,8 @@ workflows:
             - npm-test
       - <<: *deploy-to-test
       - <<: *deploy-to-pre-prod
-      - <<: *approve-to-prod
-      - <<: *deploy-to-prod
+  #      - <<: *approve-to-prod
+  #      - <<: *deploy-to-prod
 
   python-template:
     when: false
@@ -265,16 +265,16 @@ workflows:
 
   no-changes:
     when:
-      equal: [ << pipeline.parameters.workflow-directory >>, . ]
+      equal: [<< pipeline.parameters.workflow-directory >>, .]
     jobs:
       - no-changes
 
   deploy-pre-sentence-report-handler:
     when:
-      equal: [ << pipeline.parameters.workflow-directory >>, pre-sentence-report-handler ]
+      equal: [<< pipeline.parameters.workflow-directory >>, pre-sentence-report-handler]
     jobs: *python-jobs
 
   deploy-workload-allocation-handler:
     when:
-      equal: [ << pipeline.parameters.workflow-directory >>, workload-allocation-handler ]
+      equal: [<< pipeline.parameters.workflow-directory >>, workload-allocation-handler]
     jobs: *npm-jobs
