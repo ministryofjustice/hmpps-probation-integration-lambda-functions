@@ -240,8 +240,8 @@ workflows:
             - npm-test
       - <<: *deploy-to-test
       - <<: *deploy-to-pre-prod
-      - <<: *approve-to-prod
-      - <<: *deploy-to-prod
+#      - <<: *approve-to-prod
+#      - <<: *deploy-to-prod
 
   python-template:
     when: false
